@@ -56,6 +56,7 @@ variable "ext_port" {
 default= "8080"
 }
 
+HP@LAPTOP-HR36TFDC MINGW64 ~
 $ terraform init
 
 Initializing provider plugins...
@@ -79,6 +80,7 @@ should now work.
 If you ever set or change modules or backend configuration for Terraform,
 rerun this command to reinitialize your working directory. If you forget, other
 commands will detect it and remind you to do so if necessary.
+HP@LAPTOP-HR36TFDC MINGW64 ~
 $ terraform plan -out tfplan
 Refreshing Terraform state in-memory prior to plan...
 The refreshed state will be used to calculate this plan, but will not be
@@ -140,6 +142,7 @@ This plan was saved to: tfplan
 To perform exactly these actions, run the following command to apply:
     terraform apply "tfplan"
 
+HP@LAPTOP-HR36TFDC MINGW64 ~
 $ terraform apply "tfplan"
 docker_image.ghost_image: Creating...
   latest: "" => "<computed>"
