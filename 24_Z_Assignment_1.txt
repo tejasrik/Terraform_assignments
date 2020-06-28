@@ -1,5 +1,3 @@
- 10.6 KB
-  
 Using Terraform to Create a RandomID and S3 Buckets
 
 Create the Main file:-
@@ -30,9 +28,8 @@ Deploy the infrastructure:-
 Initialize Terraform.
 Validate the files.
 Deploy the S3 bucket.
-====================================================================
+**********************************************************************
 nano variables.tf
----------------------------------
 variable "aws_region" {
   default = "us-east-2"
 }
@@ -40,9 +37,8 @@ variable "aws_region" {
 variable "project_name" {
   default = "la-terraform"
 }
--------------------------------
 nano main.tf
-----------------------
+
 provider "aws" {
  access_key = "ACCESS_KEY_HERE"
  secret_key = "SECRET_KEY_HERE"
@@ -61,19 +57,13 @@ resource "aws_s3_bucket" "tf_code"{
     name = "tf_bucket"
   }
 }
-----------------------
+
 nano outputs.tf
-----------------------
 output "bucket_name" {
 value = "${aws_s3_bucket.tf_code.id}"
 }
 
-terraform init
-terraform plan 
-terraform apply
-terraform destroy
-========================================================================
-[centos@ip-10-0-1-83 tf]$ terraform plan
+HP@LAPTOP-HR36TFDC MINGW64 ~$ terraform plan
 Refreshing Terraform state in-memory prior to plan...
 The refreshed state will be used to calculate this plan, but will not be
 persisted to local or remote state storage.
