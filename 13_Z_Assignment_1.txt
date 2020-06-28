@@ -1,0 +1,281 @@
+ Create Ghost module
+Create a directory called ghost.
+Your modules will be made up of three files: main.tf, variables.tf and outputs.tf.
+
+main.tf
+In main.tf you will deploy out two resources docker_image and docker_container. The docker_image resource name will be ghost_image.
+The name will use th image_name variable.
+The docker_container resource name will be ghost_container.
+The name will be set using a varialbe called container_name. The image will be set usingdocker_image.ghost_image.latest. Set the external port to use the ext_port variable.
+
+variables.tf
+In variables.tf create three varialbes: image_name, container_name and ext_port.
+
+outputs.tf
+In outputs.tf create two outputs: ip and container_name. The ip output the ghost_container's ip_address attribute.
+The container_name output the ghost_container's name attribute.
+
+Create root module
+main.tf
+In cloud_user directory create main.tf, variables.tf and outputs.tf. In main.tf will use the ghost module.
+Set image_name using a variable called image_name.
+Set container_name using a variable called container_name.
+Set ext_port using a variable called ext_port.
+In variables.tf create three image_name, container_name and ext_port.
+
+variables.tf
+The image_name will have a default value of ghost:latest with a description of Image for container.
+The container_name will have a default value of blogwith a description ofName of the container.  
+Theext_portwill have adefaultvalue of 80 with a description of External port for container.
+
+outputs.tf
+In outputs.tf create two outputs: ip and container_name. The ip output the ghost_container's ip_address attribute.
+The container_name output the ghost_container's name attribute.
+
+Deploy the infrastructure
+Initialize Terraform.
+Generate a Terraform plan and output a plan file.
+Deploy the infrastructure using the plan file.
+*************************************************************************8
+
+HP@LAPTOP-HR36TFDC MINGW64 ~
+$ mkdir ghost
+
+HP@LAPTOP-HR36TFDC MINGW64 ~
+$ cd ghost
+
+HP@LAPTOP-HR36TFDC MINGW64 ~/ghost
+$ pwd
+/c/Users/HP/ghost
+
+HP@LAPTOP-HR36TFDC MINGW64 ~/ghost
+$ nano.main.tf
+bash: nano.main.tf: command not found
+
+HP@LAPTOP-HR36TFDC MINGW64 ~/ghost
+$ nano main.tf
+main.tf
+resource "docker_image" "ghost_image" {
+  name = "${var.image_name}"
+}
+resource "docker_container" "ghost_container" {
+  name  = "${var.container_name}"
+  image = "${docker_image.ghost_image.latest}"
+  ports {
+    internal = "2368"
+    external = "${var.ext_port}"
+  }
+}
+
+
+HP@LAPTOP-HR36TFDC MINGW64 ~/ghost
+$ nano variables.tf
+
+variables.tf
+variable "image_name" {
+  default = "ghost:latest"
+}
+variable "container_name" {
+  default = "ghost_blog"
+}
+variable "ext_port" {
+  default = "80"
+}
+
+
+HP@LAPTOP-HR36TFDC MINGW64 ~/ghost
+$ nano output.tf
+output "container_name" {
+  value = "${docker_container.ghost_container.name}"
+}
+output "ip" {
+  value = "${docker_container.ghost_container.ip_address}"
+}
+
+HP@LAPTOP-HR36TFDC MINGW64 ~/ghost
+$ terraform init
+
+Initializing the backend...
+
+Initializing provider plugins...
+- Checking for available provider plugins...
+- Downloading plugin for provider "docker" (terraform-providers/docker) 2.7.1...
+
+
+The following providers do not have any version constraints in configuration,
+so the latest version was installed.
+
+To prevent automatic upgrades to new major versions that may contain breaking
+changes, it is recommended to add version = "..." constraints to the
+corresponding provider blocks in configuration, with the constraint strings
+suggested below.
+
+* provider.docker: version = "~> 2.7"
+
+
+Warning: Interpolation-only expressions are deprecated
+
+  on main.tf line 2, in resource "docker_image" "ghost_image":
+   2:   name = "${var.image_name}"
+
+Terraform 0.11 and earlier required all non-constant expressions to be
+provided via interpolation syntax, but this pattern is now deprecated. To
+silence this warning, remove the "${ sequence from the start and the }"
+sequence from the end of this expression, leaving just the inner expression.
+
+Template interpolation syntax is still used to construct strings from
+expressions when the template includes multiple interpolation sequences or a
+mixture of literal strings and interpolations. This deprecation applies only
+to templates that consist entirely of a single interpolation sequence.
+
+(and 3 more similar warnings elsewhere)
+
+Terraform has been successfully initialized!
+
+You may now begin working with Terraform. Try running "terraform plan" to see
+any changes that are required for your infrastructure. All Terraform commands
+should now work.
+
+If you ever set or change modules or backend configuration for Terraform,
+rerun this command to reinitialize your working directory. If you forget, other
+commands will detect it and remind you to do so if necessary.
+
+HP@LAPTOP-HR36TFDC MINGW64 ~/ghost
+$ terraform plan -out tfplan
+Refreshing Terraform state in-memory prior to plan...
+The refreshed state will be used to calculate this plan, but will not be
+persisted to local or remote state storage.
+
+
+------------------------------------------------------------------------
+
+An execution plan has been generated and is shown below.
+Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # docker_container.ghost_container will be created
+  + resource "docker_container" "ghost_container" {
+      + attach           = false
+      + bridge           = (known after apply)
+      + command          = (known after apply)
+      + container_logs   = (known after apply)
+      + entrypoint       = (known after apply)
+      + env              = (known after apply)
+      + exit_code        = (known after apply)
+      + gateway          = (known after apply)
+      + hostname         = (known after apply)
+      + id               = (known after apply)
+      + image            = (known after apply)
+      + ip_address       = (known after apply)
+      + ip_prefix_length = (known after apply)
+      + ipc_mode         = (known after apply)
+      + log_driver       = (known after apply)
+      + log_opts         = (known after apply)
+      + logs             = false
+      + must_run         = true
+      + name             = "ghost_blog"
+      + network_data     = (known after apply)
+      + read_only        = false
+      + restart          = "no"
+      + rm               = false
+      + shm_size         = (known after apply)
+      + start            = true
+      + user             = (known after apply)
+
+      + labels {
+          + label = (known after apply)
+          + value = (known after apply)
+        }
+
+      + ports {
+          + external = 80
+          + internal = 2368
+          + ip       = "0.0.0.0"
+          + protocol = "tcp"
+        }
+    }
+
+  # docker_image.ghost_image will be created
+  + resource "docker_image" "ghost_image" {
+      + id     = (known after apply)
+      + latest = (known after apply)
+      + name   = "ghost:latest"
+    }
+
+Plan: 2 to add, 0 to change, 0 to destroy.
+
+Warning: Interpolation-only expressions are deprecated
+
+  on main.tf line 2, in resource "docker_image" "ghost_image":
+   2:   name = "${var.image_name}"
+
+Terraform 0.11 and earlier required all non-constant expressions to be
+provided via interpolation syntax, but this pattern is now deprecated. To
+silence this warning, remove the "${ sequence from the start and the }"
+sequence from the end of this expression, leaving just the inner expression.
+
+Template interpolation syntax is still used to construct strings from
+expressions when the template includes multiple interpolation sequences or a
+mixture of literal strings and interpolations. This deprecation applies only
+to templates that consist entirely of a single interpolation sequence.
+
+(and 3 more similar warnings elsewhere)
+
+
+------------------------------------------------------------------------
+
+This plan was saved to: tfplan
+
+To perform exactly these actions, run the following command to apply:
+    terraform apply "tfplan"
+
+
+HP@LAPTOP-HR36TFDC MINGW64 ~/ghost
+$ terraform apply tfplan
+docker_image.ghost_image: Creating...
+docker_image.ghost_image: Still creating... [10s elapsed]
+docker_image.ghost_image: Still creating... [20s elapsed]
+docker_image.ghost_image: Still creating... [30s elapsed]
+docker_image.ghost_image: Still creating... [40s elapsed]
+docker_image.ghost_image: Still creating... [50s elapsed]
+docker_image.ghost_image: Still creating... [1m0s elapsed]
+docker_image.ghost_image: Still creating... [1m10s elapsed]
+docker_image.ghost_image: Creation complete after 1m15s [id=sha256:db9598608d2ef
+e77570d0812905d195a0b32460b3be29f207e4a5e52ca960954ghost:latest]
+docker_container.ghost_container: Creating...
+docker_container.ghost_container: Creation complete after 1s [id=3b204688d60dde8
+5d0f45dadae6da6797f876c65587b513782a6aa37bfe2628e]
+
+Warning: Interpolation-only expressions are deprecated
+
+  on main.tf line 2, in resource "docker_image" "ghost_image":
+   2:   name = "${var.image_name}"
+
+Terraform 0.11 and earlier required all non-constant expressions to be
+provided via interpolation syntax, but this pattern is now deprecated. To
+silence this warning, remove the "${ sequence from the start and the }"
+sequence from the end of this expression, leaving just the inner expression.
+
+Template interpolation syntax is still used to construct strings from
+expressions when the template includes multiple interpolation sequences or a
+mixture of literal strings and interpolations. This deprecation applies only
+to templates that consist entirely of a single interpolation sequence.
+
+(and 3 more similar warnings elsewhere)
+
+
+Apply complete! Resources: 2 added, 0 changed, 0 destroyed.
+
+The state of your infrastructure has been saved to the path
+below. This state is required to modify and destroy your
+infrastructure, so keep it safe. To inspect the complete state
+use the `terraform show` command.
+
+State path: terraform.tfstate
+
+Outputs:
+
+container_name = ghost_blog
+ip = 172.17.0.2
